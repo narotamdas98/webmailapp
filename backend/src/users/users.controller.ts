@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 class SignupDto {
   email!: string;
   password!: string;
+  name!: string;
 }
 
 class LoginDto {
@@ -17,7 +18,7 @@ export class UsersController {
 
   @Post('signup')
   async signup(@Body() body: SignupDto) {
-    const user = await this.usersService.signup(body.email, body.password);
+    const user = await this.usersService.signup(body.email, body.password, body.name);
     return { id: user.id, email: user.email, createdAt: user.createdAt };
   }
 
