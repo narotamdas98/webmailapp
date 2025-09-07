@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: webmailapp_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - webmailapp_net
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+  postfix:
+    image: catatnight/postfix
+    container_name: webmailapp_postfix
+    environment:
+      maildomain: localhost
+      smtp_user: ${MAIL_USER}:${MAIL_PASSWORD}
+    networks:
+      - webmailapp_net
+    restart: unless-stopped
+
+  dovecot:
+    image: dovecot/dovecot
+    container_name: webmailapp_dovecot
+    volumes:
+      - dovecot_data:/var/mail
+    networks:
+      - webmailapp_net
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: webmailapp_backend
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      MAIL_HOST: postfix
+      MAIL_PORT: 587
+      MAIL_USER: ${MAIL_USER}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+    depends_on:
+      - postgres
+      - postfix
+      - dovecot
+    networks:
+      - webmailapp_net
+    ports:
+      - "3001:3000"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: webmailapp_frontend
+    environment:
+      VITE_API_URL: http://localhost:3001
+    depends_on:
+      - backend
+    networks:
+      - webmailapp_net
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+  dovecot_data:
+    driver: local
+
+networks:
+  webmailapp_net:
+    driver: bridge
