@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -9,10 +9,10 @@ type Mail = {
   subject: string
   body: string
   createdAt: string
-  toUser?: { email: string }
+  fromUser?: { email: string }
 }
 
-export default function SentPage() {
+export default function InboxPage() {
   const router = useRouter()
   const [mails, setMails] = useState<Mail[] | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -23,19 +23,15 @@ export default function SentPage() {
       router.replace('/login')
       return
     }
-    apiFetch<Mail[]>('/mail/sent')
+    apiFetch<Mail[]>('/mail/inbox')
       .then((data) => setMails(data))
-      .catch((e: any) => setError(e?.message || 'Failed to load sent'))
+      .catch((e: any) => setError(e?.message || 'Failed to load inbox'))
   }, [router])
 
   return (
     <div className="max-w-3xl mx-auto p-4 space-y-4">
-      <nav className="flex gap-4 text-blue-600">
-        <Link href="/inbox">Inbox</Link>
-        <Link href="/sent" className="font-semibold">Sent</Link>
-        <Link href="/compose">Compose</Link>
-      </nav>
-      <h1 className="text-xl font-semibold">Sent</h1>
+     
+      <h1 className="text-xl font-semibold">Inbox</h1>
       {!mails && !error && <p>Loading…</p>}
       {error && <p className="text-red-600 text-sm">{error}</p>}
       {mails && (
@@ -44,7 +40,7 @@ export default function SentPage() {
             <li key={m.id} className="p-3 flex items-center justify-between">
               <div>
                 <div className="font-medium">{m.subject}</div>
-                <div className="text-sm text-gray-600">To: {m.toUser?.email}</div>
+                <div className="text-sm text-gray-600">From: {m.fromUser?.email}</div>
               </div>
               <div className="text-sm text-gray-500">{new Date(m.createdAt).toLocaleString()}</div>
             </li>

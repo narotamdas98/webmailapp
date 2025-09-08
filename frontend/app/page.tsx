@@ -1,16 +1,14 @@
-import Link from 'next/link'
+"use client"
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export default function HomePage() {
-  return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">Welcome to Webmail</h1>
-      <div className="flex gap-3">
-        <Link className="text-blue-600 underline" href="/signup">Go to Signup</Link>
-        <Link className="text-blue-600 underline" href="/login">Go to Login</Link>
-        <Link className="text-blue-600 underline" href="/inbox">Go to Inbox</Link>
-      </div>
-    </div>
-  )
+  const router = useRouter()
+  useEffect(() => {
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+    router.replace(token ? '/inbox' : '/login')
+  }, [router])
+  return null
 }
 
 

@@ -12,7 +12,7 @@ type LoginForm = {
   password: string
 }
 
-const schema: yup.SchemaOf<LoginForm> = yup.object({
+const schema = yup.object({
   email: yup.string().required('Email is required').email('Invalid email'),
   password: yup.string().required('Password is required'),
 })
@@ -32,13 +32,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Log in</h1>
+    <div className="max-w-sm mx-auto p-6 space-y-6 border rounded">
+      <h1 className="text-2xl font-semibold text-center">Log in</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <Input type="email" label="Email" placeholder="you@example.com" {...register('email')} error={errors.email} />
         <Input type="password" label="Password" placeholder="••••••••" {...register('password')} error={errors.password} />
-        <Button type="submit" loading={isSubmitting}>Log in</Button>
+        <Button type="submit" loading={isSubmitting} className="w-full">Log in</Button>
       </form>
+      <p className="text-center text-sm">No account? <a className="text-blue-600 underline" href="/signup">Create one</a></p>
     </div>
   )
 }
