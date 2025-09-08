@@ -14,5 +14,21 @@ model User {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  mailsSent     Mail[]   @relation("MailSent")
+  mailsReceived Mail[]   @relation("MailReceived")
+}
+
+
+model Mail {
+  id          String   @id @default(uuid())
+  subject     String
+  body        String
+  fromUserId  Int
+  toUserId    Int
+  createdAt   DateTime @default(now())
+  read        Boolean  @default(false)
+
+  fromUser User @relation("MailSent", fields: [fromUserId], references: [id])
+  toUser   User @relation("MailReceived", fields: [toUserId], references: [id])
 }
 
