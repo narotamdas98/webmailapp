@@ -6,7 +6,7 @@ import { MailService } from './mail.service';
 class SendMailDto {
   subject!: string;
   body!: string;
-  toUserId!: number;
+  toEmail!: string;
 }
 
 @Controller('mail')
@@ -16,7 +16,7 @@ export class MailController {
 
   @Post('send')
   async send(@GetUser() user: any, @Body() dto: SendMailDto) {
-    return this.mailService.sendMail(user.id, dto.toUserId, dto.subject, dto.body);
+    return this.mailService.sendMailByEmail(user.id, dto.toEmail, dto.subject, dto.body);
   }
 
   @Get('inbox')
