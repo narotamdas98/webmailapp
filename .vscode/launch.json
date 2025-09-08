@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Backend: NestJS (watch)",
+            "cwd": "${workspaceFolder}/backend",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "start:dev"
+            ],
+            "console": "integratedTerminal",
+            "restart": true,
+            "autoAttachChildProcesses": true,
+            "env": {
+                "TS_NODE_TRANSPILE_ONLY": "true",
+                "TS_NODE_PROJECT": "${workspaceFolder}/backend/tsconfig.json",
+                "NODE_OPTIONS": "--inspect=9229"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Frontend: Next.js (dev)",
+            "cwd": "${workspaceFolder}/frontend",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "dev"
+            ],
+            "console": "integratedTerminal",
+            "restart": true,
+            "autoAttachChildProcesses": true,
+            "env": {
+                "NODE_OPTIONS": "--inspect=9230",
+                "NEXT_TELEMETRY_DISABLED": "1"
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Start All (Backend + Frontend)",
+            "configurations": [
+                "Backend: NestJS (watch)",
+                "Frontend: Next.js (dev)"
+            ]
+        }
+    ]
+}
