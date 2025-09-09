@@ -12,7 +12,7 @@ export default function ComposePage() {
     e.preventDefault()
     setStatus(null)
     try {
-      await apiFetch('/mail/send', {
+      await apiFetch('/mail/send-smtp', {
         method: 'POST',
         body: { toEmail, subject, body },
       })

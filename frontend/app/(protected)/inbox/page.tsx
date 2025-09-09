@@ -23,8 +23,11 @@ export default function InboxPage() {
       router.replace('/login')
       return
     }
-    apiFetch<Mail[]>('/mail/inbox')
-      .then((data) => setMails(data))
+    apiFetch('/mail/fetch-inbox')
+    .then((data) => {
+      console.log('Fetched inbox data:', data);
+      setMails(data.messages);
+    })
       .catch((e: any) => setError(e?.message || 'Failed to load inbox'))
   }, [router])
 

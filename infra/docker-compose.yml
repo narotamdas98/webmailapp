@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 
 services:
   postgres:
@@ -18,35 +18,71 @@ services:
     restart: unless-stopped
 
   postfix:
-    image: catatnight/postfix
+    build:
+      context: ./postfix
+      dockerfile: Dockerfile
     container_name: webmailapp_postfix
     environment:
-      maildomain: localhost
-      smtp_user: ${MAIL_USER}:${MAIL_PASSWORD}
+      MAIL_DB_HOST: ${MAIL_DB_HOST}
+      MAIL_DB_USER: ${MAIL_DB_USER}
+      MAIL_DB_PASSWORD: ${MAIL_DB_PASSWORD}
+      MAIL_DB_NAME: ${MAIL_DB_NAME}
+      MAIL_DOMAIN: ${MAIL_DOMAIN}
+      VMAIL_UID: ${VMAIL_UID}
+      VMAIL_GID: ${VMAIL_GID}
+    volumes:
+      - maildata:/var/mail/vhosts
+      - ./scripts:/scripts
+    depends_on:
+      - postgres
     networks:
       - webmailapp_net
+    ports:
+      - "2525:25"
     restart: unless-stopped
+    env_file:
+      - .env
 
   dovecot:
-    image: dovecot/dovecot
+    build:
+      context: ./dovecot
+      dockerfile: Dockerfile
     container_name: webmailapp_dovecot
+    environment:
+      MAIL_DB_HOST: ${MAIL_DB_HOST}
+      MAIL_DB_USER: ${MAIL_DB_USER}
+      MAIL_DB_PASSWORD: ${MAIL_DB_PASSWORD}
+      MAIL_DB_NAME: ${MAIL_DB_NAME}
+      MAIL_DOMAIN: ${MAIL_DOMAIN}
+      VMAIL_UID: ${VMAIL_UID}
+      VMAIL_GID: ${VMAIL_GID}
     volumes:
-      - dovecot_data:/var/mail
+      - maildata:/var/mail/vhosts
+    depends_on:
+      - postgres
     networks:
       - webmailapp_net
+    ports:
+      - "1143:143"
     restart: unless-stopped
+    env_file:
+      - .env
 
   backend:
     build:
       context: ../backend
       dockerfile: Dockerfile
     container_name: webmailapp_backend
+    # volumes:
+    #   - ../backend:/app # Mount local backend code
+    #   - /app/node_modules # Keep container's node_modules separate
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-      MAIL_HOST: postfix
-      MAIL_PORT: 587
-      MAIL_USER: ${MAIL_USER}
-      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      IMAP_HOST: ${IMAP_HOST}
+      IMAP_PORT: ${IMAP_PORT}
+      NODE_ENV: development
     depends_on:
       - postgres
       - postfix
@@ -54,16 +90,22 @@ services:
     networks:
       - webmailapp_net
     ports:
-      - "3001:3000"
+      - "3001:3001"
     restart: unless-stopped
+    env_file:
+      - .env
 
   frontend:
     build:
       context: ../frontend
       dockerfile: Dockerfile
     container_name: webmailapp_frontend
+    volumes:
+      - ../frontend:/app # Mount local frontend code
+      - /app/node_modules # Keep container node_modules separate
     environment:
       VITE_API_URL: http://localhost:3001
+      NEXT_TELEMETRY_DISABLED: "1"
     depends_on:
       - backend
     networks:
@@ -75,7 +117,7 @@ services:
 volumes:
   postgres_data:
     driver: local
-  dovecot_data:
+  maildata:
     driver: local
 
 networks:

@@ -20,14 +20,17 @@
         "@nestjs/passport": "^10.0.3",
         "@nestjs/platform-express": "^10.0.0",
         "@prisma/client": "^5.18.0",
-        "bcrypt": "^5.1.1",
+        "bcryptjs": "^3.0.2",
         "class-transformer": "^0.5.1",
         "class-validator": "^0.14.1",
+        "imapflow": "^1.0.195",
+        "nodemailer": "^6.9.8",
         "passport": "^0.7.0",
         "passport-jwt": "^4.0.1",
         "passport-local": "^1.0.0",
         "reflect-metadata": "^0.2.2",
-        "rxjs": "^7.8.1"
+        "rxjs": "^7.8.1",
+        "sha512-crypt-ts": "^0.1.27"
     },
     "devDependencies": {
         "@nestjs/cli": "^10.4.5",
@@ -35,6 +38,7 @@
         "@nestjs/testing": "^10.0.0",
         "@types/bcrypt": "^5.0.2",
         "@types/node": "^20.11.30",
+        "@types/nodemailer": "^6.4.14",
         "@types/passport-jwt": "^4.0.1",
         "prisma": "^5.18.0",
         "ts-node": "^10.9.2",

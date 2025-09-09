@@ -1,0 +1,16 @@
+# SQL configuration for Dovecot
+
+# Database driver
+driver = pgsql
+
+# Default password scheme for this database
+default_pass_scheme = SHA512-CRYPT
+
+# Connection string
+connect = host=postgres dbname=webmailappdb user=webmailappuser password=my_password
+
+# Password query
+password_query = SELECT email AS user, dovecot_password AS password FROM "User" WHERE email = '%u'
+
+# User query
+user_query = SELECT '/var/mail/vhosts/%d/%n' AS home, 'vmail' AS uid, 'vmail' AS gid FROM user WHERE email = '%u'
