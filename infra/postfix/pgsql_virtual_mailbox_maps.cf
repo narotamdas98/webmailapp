@@ -1,5 +1,5 @@
 user = webmailappuser
 password = my_password
-hosts = postgres
+hosts = 172.18.0.4
 dbname = webmailappdb
-query = SELECT 1 FROM "User" WHERE email = '%s'
+query = SELECT split_part(email, '@', 2) || '/' || split_part(email, '@', 1) || '/Maildir/' FROM "User" WHERE email = '%s'

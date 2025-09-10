@@ -39,8 +39,10 @@ smtpd_recipient_restrictions =
 
 # Virtual delivery
 virtual_minimum_uid = 5000
-virtual_uid_maps = static:5000
-virtual_gid_maps = static:5000
+
 
 # Logging
 maillog_file = /var/log/mail.log
+
+# virtual_alias_maps = pgsql:/etc/postfix/pgsql_virtual_alias_maps.cf
+

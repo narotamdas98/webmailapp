@@ -1,0 +1,5 @@
+user = webmailappuser
+password = my_password
+hosts = postgres
+dbname = webmailappdb
+query = SELECT email FROM "User" WHERE email = '%s'
